@@ -2,6 +2,15 @@ from tools.domainTools import checkDomainIP
 from tools.utils import removeDuplicates
 import argparse, os
 
+"""
+Script para analizar dominios o IPs utilizando la API de VirusTotal.
+Permite analizar un único objetivo o múltiples desde un fichero.
+
+
+Requiere la variable de entorno VT_API_KEY configurada con la clave de API de VirusTotal.
+
+"""
+
 description_text = """
     🔎 Analizador de Dominios/IPs con VirusTotal 🌍
 
@@ -16,11 +25,13 @@ description_text = """
         ❌  -e, --except-domain: Dominios separados por comas a excluir (por defecto: mshome.net).
 """
 
+# Configuración del parser de argumentos
 parser = argparse.ArgumentParser(
     description=description_text,
     formatter_class=argparse.RawTextHelpFormatter 
 )
 
+# Definición de argumentos
 group = parser.add_mutually_exclusive_group(required=True)
 group.add_argument("-t", "--target", type=str, help="Dominio o IP a analizar.")
 group.add_argument("-f", "--file", type=str, help="Fichero con lista de dominios o IPs a analizar.")
@@ -39,6 +50,8 @@ if args.except_domain:
 else:
     domains_except = ["mshome.net"]
 
+
+# Procesamiento según el modo seleccionado
 if args.target:
     print(f"🎯 Analizando objetivo único: {args.target}...")
     resultado = checkDomainIP(args.target)

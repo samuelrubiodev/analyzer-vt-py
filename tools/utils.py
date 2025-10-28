@@ -1,4 +1,16 @@
-def removeDuplicates(sourcePathFile, domainsExcepts):
+# Utilidades para la gestión de archivos y manipulación de datos.
+
+"""
+Remueve líneas duplicadas de un archivo de texto, excluyendo aquellas que terminan con dominios específicos.
+
+Args:
+    sourcePathFile (str): Ruta al archivo de texto fuente.
+    domainsExcepts (list): Lista de dominios que no deben ser eliminados.
+Returns:
+    set: Conjunto de líneas únicas del archivo, excluyendo las que terminan con los dominios especificados.
+
+"""
+def removeDuplicates(sourcePathFile, domainsExcepts=[]):
     try:
         with open(sourcePathFile, 'r', encoding='utf-16') as f:
             lineas = f.readlines()

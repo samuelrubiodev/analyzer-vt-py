@@ -1,5 +1,18 @@
 import vt, os, requests, ipaddress, asyncio
 
+"""
+Module para obtener información geográfica y de seguridad de dominios e IPs utilizando la API de VirusTotal y el servicio ip-api.com.
+
+Clases:
+- IpInfo: Clase para almacenar y representar la información de una IP.
+
+Funciones:
+- is_ip(input_string): Verifica si una cadena dada es una dirección IP válida.
+- checkDomainIpVT(domainIP): Función asíncrona que consulta la API de VirusTotal para obtener análisis de seguridad de una IP o dominio.
+- checkDomainIP(domainIP): Función principal que obtiene información geográfica y de seguridad de una IP o dominio.
+
+"""
+
 class IpInfo:
     def __init__(self, ip, city, country, isp, asn, analysis):
         self.ip = ip
