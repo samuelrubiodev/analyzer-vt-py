@@ -9,6 +9,7 @@ El script puede funcionar en dos modos: analizando un único objetivo o procesan
 * **Doble Análisis:** Obtiene tanto la reputación de seguridad de VirusTotal como la información de geolocalización (País, Ciudad, ISP) de la IP.
 * **Análisis en Lote:** Procesa archivos `.txt` (generados, por ejemplo, por Tshark o Zeek) que contienen múltiples dominios o IPs.
 * **Escaneo Activo en VT:** Si un dominio no tiene un análisis reciente en VirusTotal, el script **solicitará un nuevo escaneo automáticamente** y esperará a que se complete para obtener el resultado.
+* **Gestión de Límites de API:** Controla automáticamente el número de peticiones por minuto para no exceder los límites de la API pública, con una pausa de 60 segundos (configurable).
 * **Limpieza de Datos:** Filtra automáticamente líneas duplicadas y dominios "ruido" (como `.mshome.net` por defecto).
 * **Manejo de Codificación:** Preparado para leer archivos de entrada en `utf-16`, un formato común al exportar desde Tshark en Windows.
 
@@ -124,19 +125,32 @@ Salida de ejemplo:
 ✅ Análisis completado.
 ```
 
-#### Opción: Excluir Dominios (`-e` o `--except-domain`)
+#### Opciónes adicionales 
 
-Puedes pasar una lista de sufijos de dominio (separados por comas) para que sean ignorados durante el procesamiento del archivo. El valor por defecto ya excluye `mshome.net`
+##### Excluir Dominios (`-e` o `--except-domain`)
+
+Puedes pasar una lista de sufijos de dominio (separados por comas) para que sean ignorados durante el procesamiento del archivo. (Solo se puede usar con `-f`).
 
 ```bash
 # Excluir dominios .local y .lan
 python domainAnalyzer.py -f mi_lista.txt -e ".local,.lan"
 ```
 
+##### Cambiar el Límite de Peticiones (`-l` o `--limit`)
+
+Si tienes una clave de API con más privilegios, puedes aumentar el número de peticiones antes de la pausa de 60 segundos.
+
+```bash
+# Aumentar el límite a 20 peticiones antes de cada pausa
+python domainAnalyzer.py -f mi_lista.txt -l 20
+```
+
 ---
 
 ### ⚠️ Nota Importante sobre los Límites de la API
 
-La API pública de VirusTotal tiene límites estrictos (generalmente 4 peticiones por minuto).
+La API pública de VirusTotal tiene límites estrictos (normalmente 4 peticiones por minuto).
 
-La función de solicitar un nuevo escaneo (`scan_url_async`) consume una petición y puede tardar varios minutos en completarse. Si tu lista de dominios contiene muchos que no están en VT, el script tardará mucho tiempo en completarse (15+ segundos por cada petición) para respetar estos límites.
+- **Manejo Automático**: Para respetar este límite, el script automáticamente se pausará durante 60 segundos después de procesar el número de objetivos especificado por el argumento -l (que por defecto es 4).
+- **Cuentas de Pago**: Si tienes una clave de API de pago con más privilegios, puedes aumentar este límite con el argumento -l.
+- **Tiempo de Escaneo**: La función de solicitar un nuevo escaneo (scan_url_async) consume una petición y puede tardar varios minutos en completarse. Si tu lista de dominios contiene muchos que no están en VT, el script tardará mucho tiempo en completarse mientras espera los resultados de VirusTotal.
